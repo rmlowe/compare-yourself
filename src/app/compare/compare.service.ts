@@ -23,8 +23,12 @@ export class CompareService {
     this.dataIsLoading.next(true);
     this.dataEdited.next(false);
     this.userData = data;
-      this.http.post('https://API_ID.execute-api.REGION.amazonaws.com/dev/', data, {
-        headers: new Headers({'Authorization': 'XX'})
+    this.authService.getAuthenticatedUser().getSession((err, session) => {
+      if (err) {
+        return;
+      }
+      this.http.post('https://e65vc5heok.execute-api.us-east-2.amazonaws.com/dev/compare-yourself', data, {
+        headers: new Headers({'Authorization': session.getIdToken().getJwtToken()})
       })
         .subscribe(
           (result) => {
@@ -38,6 +42,7 @@ export class CompareService {
             this.dataEdited.next(false);
           }
         );
+    });
   }
   onRetrieveData(all = true) {
     this.dataLoaded.next(null);
